@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# encoding=utf8
 try:
     import Image
 except ImportError:
@@ -5,7 +8,7 @@ except ImportError:
 import pytesseract
 
 #Comenta la siguiente linea si tienes tesseract dentro del PATH, si no especifica la direccion al ejecutable
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract'
+#pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract'
 
 class Usuario:
     def __init__(self):

@@ -1,19 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Simple Bot to reply to Telegram messages
-# This program is dedicated to the public domain under the CC0 license.
-"""
-This Bot uses the Updater class to handle the bot.
-First, a few callback functions are defined. Then, those functions are passed to
-the Dispatcher and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-Usage:
-Example of a bot-user conversation using ConversationHandler.
-Send /start to initiate the conversation.
-Press Ctrl-C on the command line or send a signal to the process to stop the
-bot.
-"""
+# encoding=utf8
+
+
 import re
 from user import Usuario
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
@@ -86,7 +75,7 @@ def photo(bot, update, user_data):
     verificacion = user_data['usuario'].Verify_Name('user_photo.jpg')
     if verificacion:
         logger.info("Exito")
-        update.message.reply_text('¡Genial! he podido validar tu nombre de entrenador: ' + user_data['usuario'].name)
+        update.message.reply_text('Genial! he podido validar tu nombre de entrenador: ' + user_data['usuario'].name)
         update.message.reply_text("Ahora necesito que me pases tu codigo de amigo, puedes hacerlo de dos maneras:\n\n-Mediante el boton 'Copiar codigo de Entrenador' y enviarlo a esta conversación.\n\n-Copiando los numeros directamente, con los espacios entre cada serie de 4 numeros.")
 
         return FCODE
@@ -115,7 +104,7 @@ def FCode_Image(bot, update, user_data):
     verificacion = user_data['usuario'].Verify_Code('user_code_photo.jpg')
     if verificacion:
         logger.info("Exito")
-        update.message.reply_text('¡Genial! he podido validar tu codigo de amigo: ' + user_data['usuario'].friend_code)
+        update.message.reply_text('Genial! he podido validar tu codigo de amigo: ' + user_data['usuario'].friend_code)
         db.AddUser(user_data['usuario'].name, user_data['usuario'].team, user.id, user_data['usuario'].friend_code)
         update.message.reply_text('Tu perfil ha sido creado correctamente, ahora puedes conseguir codigos de amigo con el comando /codigos')
 
@@ -131,7 +120,7 @@ def exclusive(bot, update, user_data):
     existe = db.CheckUserId(user)
 
     if existe:
-        update.message.reply_text('¿Quieres que los códigos de amigo sean de un equipo en especial?' , 
+        update.message.reply_text('Quieres que los códigos de amigo sean de un equipo en especial?' , 
         reply_markup=ReplyKeyboardMarkup(equipos, one_time_keyboard=True))
     
         return CANTIDAD
@@ -195,7 +184,7 @@ def error(bot, update, error):
 
 def main():
     # Creamos el update con el Token de la API a Telegram
-    updater = Updater("TU TOKEN AQUI")
+    updater = Updater("Tu Token aqui")
 
     dp = updater.dispatcher
 

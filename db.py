@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# encoding=utf8
 import sqlite3
 from random import shuffle
 
