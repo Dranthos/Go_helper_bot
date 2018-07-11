@@ -138,20 +138,28 @@ def cantidad(bot, update, user_data):
     cantidades = [["1","5","10"]]
     user_data['peticion_equipo'] = equipo
 
-    update.message.reply_text('¿Cuantos codigos quieres que te sirva? *(LOS CODIGOS ACTUALES SON FALSOS PARA DEBUG)*', 
+    update.message.reply_text('¿Cuantos codigos quieres que te sirva?', 
         reply_markup=ReplyKeyboardMarkup(cantidades, one_time_keyboard=True))
     
     return CODIGOS
 
 def obtener_codigos(bot, update, user_data):
-    codigos = db.GrabCodes(update.message.text,user_data['peticion_equipo'])
+
+    codigos = db.GrabCodes(update.message.text,user_data['peticion_equipo'],update.message.from_user.id)
     texto = ""
-    for i in codigos:
-        fila = "%s - %s - %s\n" % (i[0], i[1], i[2])
-        texto += fila
 
-    update.message.reply_text('Aqui estan tus codigos:\n `%s`' % (texto), parse_mode='Markdown', reply_markup=ReplyKeyboardRemove())
-
+    bot.send_chat_action(chat_id=update.message.chat_id, action='typing')
+    if codigos:
+        for i in codigos:
+            fila = "%s - %s - %s\n" % (i[0], i[1], i[2])
+            texto += fila
+        
+        if len(codigos) < int(update.message.text):
+            update.message.reply_text('No he podido conseguir la cantidad deseada. Aqui estan tus codigos:\n `%s`' % (texto), parse_mode='Markdown', reply_markup=ReplyKeyboardRemove())
+        else:
+            update.message.reply_text('Aqui estan tus codigos:\n `%s`' % (texto), parse_mode='Markdown', reply_markup=ReplyKeyboardRemove())
+    else:
+        update.message.reply_text('No he conseguido ningun codigo con el filtro especificado', reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
 
 def info(bot, update, user_data):
@@ -167,6 +175,9 @@ def info(bot, update, user_data):
         update.message.reply_text('Tu equipo es: %s' % (info[2]))
         update.message.reply_text('Tu Codigo de amigo es: %s' % (info[3]))
         update.message.reply_text('Tu estado actual es: %s' % (info[4]))
+
+def ayuda(bot, update):
+    update.message.reply_text("▶️GO Helper esta actualmente en fase beta, puede haber muchos errores comunes o de optimización. \n Por favor, si encuentras un error que no sea solucionable con /cancelar, escribe a @Dranthos")
 
 def cancel(bot, update, user_data):
     user = update.message.from_user
@@ -184,7 +195,7 @@ def error(bot, update, error):
 
 def main():
     # Creamos el update con el Token de la API a Telegram
-    updater = Updater("Tu Token aqui")
+    updater = Updater("512088174:AAGD40jTIuDtW6k2MPf9HJgj94S80rLxOpo")
 
     dp = updater.dispatcher
 
@@ -201,12 +212,12 @@ def main():
 
             NOMBRE: [MessageHandler(Filters.text, nombre, pass_user_data=True)],
 
-            FCODE: [RegexHandler('^(¡Comencemos una buena amistad en Pokémon GO! ¡Mi código de Entrenador es|\d{4})', FCode, pass_user_data=True)],
+            FCODE: [RegexHandler(r'^(¡Comencemos una buena amistad en Pokémon GO! ¡Mi código de Entrenador es|\d{4})', FCode, pass_user_data=True)],
 
             FCODEI: [MessageHandler(Filters.photo, FCode_Image, pass_user_data=True)]
         },
 
-        fallbacks=[CommandHandler('cancel', cancel, pass_user_data=True)]
+        fallbacks=[CommandHandler('cancelar', cancel, pass_user_data=True)]
     )
     #Handler para coger codigos de la bbdd
     codigos_handler = ConversationHandler(
@@ -219,13 +230,14 @@ def main():
             CODIGOS: [RegexHandler('^(1|5|10)$', obtener_codigos, pass_user_data=True)]
         },
 
-        fallbacks=[CommandHandler('cancel', cancel, pass_user_data=True)]
+        fallbacks=[CommandHandler('cancelar', cancel, pass_user_data=True)]
 
     )
 
     dp.add_handler(registro_handler)
     dp.add_handler(codigos_handler)
     dp.add_handler(CommandHandler("info", info, pass_user_data=True))
+    dp.add_handler(CommandHandler("ayuda", ayuda))
 
     # logger de errores
     dp.add_error_handler(error)

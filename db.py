@@ -56,7 +56,7 @@ def AddUser(nombre, equipo, id, codigo):
     conn.commit()
     conn.close()
 
-def GrabCodes(numero, equipo):
+def GrabCodes(numero, equipo, id):
 
     archivo = 'db.sqlite'
 
@@ -64,12 +64,10 @@ def GrabCodes(numero, equipo):
     c = conn.cursor()
 
     if equipo == 0:
-        c.execute("SELECT name, code, team FROM users")
+        c.execute("SELECT name, code, team FROM users WHERE telegram_id!=%s" % (id))
     else:
-        c.execute("SELECT name, code, team FROM users WHERE team='%s'" % (equipo))
+        c.execute("SELECT name, code, team FROM users WHERE team='%s' AND telegram_id!=%s " % (equipo, id))
     lista = c.fetchall()
     shuffle(lista)
 
-    for i in lista:
-        print(i)
     return lista[:int(numero)]
