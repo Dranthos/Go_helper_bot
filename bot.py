@@ -195,7 +195,7 @@ def error(bot, update, error):
 
 def main():
     # Creamos el update con el Token de la API a Telegram
-    updater = Updater("512088174:AAGD40jTIuDtW6k2MPf9HJgj94S80rLxOpo")
+    updater = Updater("")
 
     dp = updater.dispatcher
 
